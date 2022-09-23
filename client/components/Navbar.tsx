@@ -11,21 +11,25 @@ const Navbar = () => {
         <Link href="/">Gistbin</Link>
       </div>
       <div className="flex gap-6">
-        <button
-          className={`px-5 py-2 border-2 ${
-            router.pathname === "/login" ? "hidden" : ""
-          }`}
-        >
-          <Link href="/login">Login</Link>
-        </button>
+        <Link href="/login" className="">
+          <a
+            className={`btn-secondary ${
+              router.pathname === "/login" ? "hidden" : ""
+            }`}
+          >
+            Login
+          </a>
+        </Link>
 
-        <button
-          className={`px-5 py-2 border-2 ${
-            router.pathname === "/signup" ? "hidden" : ""
-          }`}
-        >
-          <Link href="/signup">Signup</Link>
-        </button>
+        <Link href="/signup">
+          <a
+            className={`btn-secondary ${
+              router.pathname === "/signup" ? "hidden" : ""
+            }`}
+          >
+            Signup
+          </a>
+        </Link>
       </div>
     </nav>
   );

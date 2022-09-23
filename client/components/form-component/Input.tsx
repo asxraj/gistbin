@@ -4,10 +4,12 @@ const Input = ({
   name,
   title,
   type,
+  handleChange,
 }: {
   name: string;
   title: string;
   type: string;
+  handleChange: any;
 }) => {
   return (
     <div className={`flex flex-col`}>
@@ -17,6 +19,7 @@ const Input = ({
       <input
         type={type}
         name={name}
+        onChange={handleChange}
         className="p-3 focus:outline-none caret-slate-900 text-slate-900 text-sm w-[500px]"
       />
     </div>

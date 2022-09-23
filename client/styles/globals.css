@@ -4,6 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .btn-primary {
+    @apply px-5 border-white font-semibold py-3 border-2 ease-in duration-200 hover:bg-white hover:text-slate-900;
+  }
+  .btn-secondary {
+    @apply px-5 border-white font-semibold py-2 border-2 ease-in duration-200 hover:bg-white hover:text-slate-900;
+  }
+}
+
 * html {
   padding: 0;
   margin: 0;

@@ -10,13 +10,17 @@ const Gistbin = () => {
   return (
     <div className="flex justify-center p-5">
       <form onSubmit={submitHandler} className="flex flex-col">
-        <h1 className="text-xl font-semibold mb-6">New Gistbin</h1>
+        <h1 className="text-2xl font-semibold mb-3 tracking-wide">
+          New Gistbin
+        </h1>
         <textarea
           name="gistbin"
           id="gistbin"
           className="resize-none w-[700px] h-[300px] p-2 focus:outline-none caret-slate-900 text-slate-900 my-6"
         ></textarea>
-        <h1 className="mb-4 text-xl font-semibold">Optional Settings</h1>
+        <h1 className="mb-4 text-lg font-semibold tracking-wide">
+          Optional Settings
+        </h1>
         <hr />
         <div className="flex items-center justify-between w-[50%] mt-10">
           <label htmlFor="title" className="text-sm">
@@ -72,10 +76,7 @@ const Gistbin = () => {
           />
         </div>
 
-        <button
-          type="submit"
-          className="border-2 border-white px-5 py-2 rounded-lg mt-10"
-        >
+        <button type="submit" className="btn-primary mt-10">
           Create New Gistbin
         </button>
       </form>
