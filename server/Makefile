@@ -22,6 +22,12 @@ db/migrations/new:
 
 ## db/migrations/up: apply all up database migrations
 .PHONY: db/migrations/up
-db/migrations/up: confirm
+db/migrations/up: 
 	@echo 'Running up migrations...'
 	migrate -path ./migrations -database ${GISTBIN_DB_DSN} up
+
+## db/migrations/down: apply all down database migrations
+.PHONY: db/migrations/down
+db/migrations/down: 
+	@echo 'Running down migrations...'
+	migrate -path ./migrations -database ${GISTBIN_DB_DSN} down
