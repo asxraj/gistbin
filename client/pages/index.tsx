@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Gistbin from "../components/Gistbin";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
 import Section from "../components/Section";
 
 export default function Home() {
@@ -14,7 +14,7 @@ export default function Home() {
       </Head>
       <Navbar />
       <Gistbin />
-      <Footer />
+      {/* <Footer /> */}
     </Section>
   );
 }
