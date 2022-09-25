@@ -1,8 +1,10 @@
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 const Gistbin = () => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const router = useRouter();
 
   const submitHandler = (e: any) => {
     e.preventDefault();
@@ -15,9 +17,14 @@ const Gistbin = () => {
       body: JSON.stringify(payload, null, 2),
     };
 
-    fetch("http://localhost:4000/v1/create", requestOptions)
+    fetch("http://localhost:4000/v1/gistbin/create", requestOptions)
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        if (data.id) {
+          router.push(`/${data.id}`);
+        }
+        console.log(data);
+      });
 
     console.log(payload);
   };
