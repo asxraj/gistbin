@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/asxraj/gistbin/internal/models"
+	"github.com/julienschmidt/httprouter"
 )
 
 func (app *application) createGistbin(w http.ResponseWriter, r *http.Request) {
@@ -37,16 +38,38 @@ func (app *application) createGistbin(w http.ResponseWriter, r *http.Request) {
 		Expires:  expires,
 	}
 
-	err = app.models.Gistbins.Insert(gistbin)
+	id, err := app.models.Gistbins.Insert(gistbin)
 	if err != nil {
 		app.errorLog.Println(err)
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusCreated, wrapper{"response": "ok"}, nil)
+	err = app.writeJSON(w, http.StatusCreated, wrapper{"response": "ok", "id": id}, nil)
 	if err != nil {
 		app.errorLog.Println(err)
 
+	}
+
+}
+
+func (app *application) viewGistbin(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context()).ByName("id")
+
+	id, err := strconv.ParseInt(params, 10, 64)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+	gistbin, err := app.models.Gistbins.Get(id)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, wrapper{"gistbin": gistbin}, nil)
+	if err != nil {
+		app.errorLog.Println(err)
 	}
 
 }
