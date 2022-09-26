@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/asxraj/gistbin/internal/models"
+	"github.com/asxraj/gistbin/internal/validator"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -38,6 +39,13 @@ func (app *application) createGistbin(w http.ResponseWriter, r *http.Request) {
 		Content:  input.Content,
 		Category: input.Category,
 		Expires:  expires,
+	}
+
+	v := validator.New()
+
+	if models.ValidateGistbin(v, gistbin); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
 	}
 
 	err = app.models.Gistbins.Insert(gistbin)

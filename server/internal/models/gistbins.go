@@ -5,7 +5,13 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+
+	"github.com/asxraj/gistbin/internal/validator"
 )
+
+type GistbinModel struct {
+	DB *sql.DB
+}
 
 type Gistbin struct {
 	ID        int       `json:"id"`
@@ -16,8 +22,15 @@ type Gistbin struct {
 	Expires   time.Time `json:"expires"`
 }
 
-type GistbinModel struct {
-	DB *sql.DB
+func ValidateGistbin(v *validator.Validator, gistbin *Gistbin) {
+	v.Check(gistbin.Title != "", "title", "must be provided")
+	v.Check(len(gistbin.Title) <= 100, "title", "must not be more than 100 bytes long")
+
+	v.Check(gistbin.Content != "", "content", "must be provided")
+
+	v.Check(validator.PermittedValue(gistbin.Category, "None", "Coding", "Cryptocurrency", "Finance", "Food", "Gaming", "Movies"), "category", "category does not exist")
+
+	v.Check(gistbin.Expires.After(time.Now()), "expires", "cannot be before created time")
 }
 
 func (m GistbinModel) Insert(gistbin *Gistbin) error {
