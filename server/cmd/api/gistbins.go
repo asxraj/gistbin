@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -20,13 +22,13 @@ func (app *application) createGistbin(w http.ResponseWriter, r *http.Request) {
 
 	err := app.readJSON(w, r, &input)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.badRequestResponse(w, r, err)
 		return
 	}
 
 	minutes, err := strconv.Atoi(input.Expires)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.badRequestResponse(w, r, err)
 		return
 	}
 	expires := time.Now().Add(time.Duration(minutes) * time.Minute)
@@ -38,38 +40,44 @@ func (app *application) createGistbin(w http.ResponseWriter, r *http.Request) {
 		Expires:  expires,
 	}
 
-	id, err := app.models.Gistbins.Insert(gistbin)
+	err = app.models.Gistbins.Insert(gistbin)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusCreated, wrapper{"response": "ok", "id": id}, nil)
-	if err != nil {
-		app.errorLog.Println(err)
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/movies/%d", gistbin.ID))
 
+	err = app.writeJSON(w, http.StatusCreated, wrapper{"gistbin": gistbin}, headers)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
 	}
 
 }
 
 func (app *application) viewGistbin(w http.ResponseWriter, r *http.Request) {
 	params := httprouter.ParamsFromContext(r.Context()).ByName("id")
-
 	id, err := strconv.ParseInt(params, 10, 64)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.badRequestResponse(w, r, err)
 		return
 	}
 
 	gistbin, err := app.models.Gistbins.Get(id)
 	if err != nil {
-		app.errorLog.Println(err)
+		switch {
+		case errors.Is(err, models.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
 		return
 	}
 
 	err = app.writeJSON(w, http.StatusOK, wrapper{"gistbin": gistbin}, nil)
 	if err != nil {
-		app.errorLog.Println(err)
+		app.serverErrorResponse(w, r, err)
 	}
 
 }
