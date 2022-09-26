@@ -54,7 +54,9 @@ const GistbinPage = () => {
             <p className="">CATEGORY: {gistbin?.category}</p>
           </div>
           <div className="bg-slate-900 p-4">
-            <pre className="text-sm">{gistbin?.content}</pre>
+            <pre className="text-sm whitespace-pre-wrap">
+              {gistbin?.content}
+            </pre>
           </div>
           <div className="flex justify-between p-4 bg-slate-500">
             <p>CREATED: {gistbin?.created_at}</p>

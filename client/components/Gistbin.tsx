@@ -1,9 +1,15 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
+interface error {
+  title: string;
+  content: string;
+}
+
 const Gistbin = () => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const [errors, setErrors] = useState<error>();
   const router = useRouter();
 
   const submitHandler = (e: any) => {
@@ -20,8 +26,10 @@ const Gistbin = () => {
     fetch("http://localhost:4000/v1/gistbin/create", requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        if (data.id) {
-          router.push(`/${data.id}`);
+        if (data.error) {
+          setErrors(data.error);
+        } else if (data.gistbin) {
+          router.push(`/${data.gistbin.id}`);
         }
         console.log(data);
       });
@@ -38,7 +46,10 @@ const Gistbin = () => {
         <textarea
           name="content"
           onChange={(e: any) => setContent(e.target.value)}
-          className="resize-none w-[700px] h-[300px] p-2 focus:outline-none caret-slate-900 text-slate-900 mb-6"
+          className={`resize-none w-[700px] h-[300px] p-2 focus:outline-none caret-slate-900 text-slate-900 mb-6 ${
+            errors?.content && "border-2 border-red-400"
+          }`}
+          placeholder={errors?.content && errors?.content}
         ></textarea>
         <h1 className="mb-4 text-lg font-semibold tracking-wide">
           Optional Settings
@@ -52,7 +63,10 @@ const Gistbin = () => {
             type="text"
             name="title"
             onChange={(e: any) => setTitle(e.target.value)}
-            className="p-1 focus:outline-none caret-slate-900 text-slate-900 text-sm w-[200px]"
+            className={`p-1 focus:outline-none caret-slate-900 text-slate-900 text-sm w-[200px] ${
+              errors?.title && "border-2 border-red-400"
+            }`}
+            placeholder={errors?.title && errors.title}
           />
         </div>
         <div className="flex items-center justify-between w-[50%] mt-5">

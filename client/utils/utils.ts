@@ -30,7 +30,7 @@ export const expiresDays = (date: string): string => {
   const diffSeconds = Math.floor((expireDate - today) / 1000);
   const diffMinutes = Math.floor(diffSeconds / 60);
   const diffHours = Math.floor(diffMinutes / 60);
-  const diffDays = Math.floor(diffHours / 24);
+  const diffDays = Math.round(diffHours / 24);
 
   return `${diffDays}`;
 };
