@@ -6,10 +6,10 @@
 
 @layer components {
   .btn-primary {
-    @apply px-5 border-white font-semibold py-3 border-2 ease-in duration-200 hover:bg-white hover:text-slate-900;
+    @apply px-5 border-white font-semibold py-3 border-2 ease-in duration-200 hover:bg-white hover:text-slate-900 rounded-sm;
   }
   .btn-secondary {
-    @apply px-5 border-white font-semibold py-2 border-2 ease-in duration-200 hover:bg-white hover:text-slate-900;
+    @apply px-5 border-white font-semibold py-1.5 border-2 ease-in duration-200 hover:bg-white hover:text-slate-900 rounded-sm;
   }
 }
 

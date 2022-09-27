@@ -20,7 +20,7 @@ const Input = ({
         type={type}
         name={name}
         onChange={handleChange}
-        className="p-3 focus:outline-none caret-slate-900 text-slate-900 text-sm w-[500px]"
+        className="p-3 focus:outline-none caret-slate-900 text-slate-900 text-sm w-[500px] rounded-sm"
       />
     </div>
   );
