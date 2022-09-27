@@ -20,22 +20,33 @@ const Gistbin = () => {
 
     const data = new FormData(e.target);
     const payload = Object.fromEntries(data.entries());
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
 
     const requestOptions = {
       method: "POST",
       body: JSON.stringify(payload, null, 2),
+      headers: headers,
     };
 
     fetch("http://localhost:4000/v1/gistbin/create", requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
+      .then((response: Response) => {
+        console.log(response.status);
+
+        if (response.status === 201 || response.status === 422) {
+          return response.json();
+        }
+        return new Error("Something wrong happened");
+      })
+      .then((data: any) => {
         if (data.error) {
           setErrors(data.error);
         } else if (data.gistbin) {
           router.push(`/${data.gistbin.id}`);
         }
         console.log(data);
-      });
+      })
+      .catch((err: Error) => console.log(err));
 
     console.log(payload);
   };

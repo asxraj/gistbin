@@ -4,23 +4,29 @@ const Input = ({
   name,
   title,
   type,
-  handleChange,
+  errorMsg,
+  hasError,
 }: {
   name: string;
   title: string;
   type: string;
-  handleChange: any;
+  errorMsg: string | undefined;
+  hasError: boolean | undefined;
 }) => {
   return (
     <div className={`flex flex-col`}>
-      <label htmlFor={name} className="text-xl font-semibold my-5">
-        {title}:
-      </label>
+      <div className="flex items-center gap-4">
+        <label htmlFor={name} className="text-xl font-semibold my-5">
+          {title}:
+        </label>
+        <label className="text-xs text-red-400 opacity-75">{errorMsg}</label>
+      </div>
       <input
         type={type}
         name={name}
-        onChange={handleChange}
-        className="p-3 focus:outline-none caret-slate-900 text-slate-900 text-sm w-[500px] rounded-sm"
+        className={`p-3 focus:outline-none caret-slate-900 text-slate-900 text-sm w-[500px] rounded-sm ${
+          hasError ? "border-2 border-red-400" : ""
+        }`}
       />
     </div>
   );
