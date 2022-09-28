@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,10 +7,10 @@
 
 @layer components {
   .btn-primary {
-    @apply px-5 border-white font-semibold py-3 border-2 ease-in duration-200 hover:bg-white hover:text-slate-900 rounded-sm;
+    @apply px-5 border-gray-300 font-semibold py-3 border-2 ease-in duration-200 hover:bg-gray-300 hover:text-slate-900 rounded-sm;
   }
   .btn-secondary {
-    @apply px-5 border-white font-semibold py-1.5 border-2 ease-in duration-200 hover:bg-white hover:text-slate-900 rounded-sm;
+    @apply px-5 border-gray-300 font-semibold py-1.5 border-2 ease-in duration-200 hover:bg-gray-300 hover:text-slate-900 rounded-sm;
   }
 }
 

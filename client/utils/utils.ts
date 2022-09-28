@@ -1,18 +1,3 @@
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
 export const humanDate = (date: string): string => {
   const created = new Date(Date.parse(date));
   return `${created.toLocaleDateString("default", {

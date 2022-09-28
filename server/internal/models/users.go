@@ -58,10 +58,10 @@ func ValidateEmail(v *validator.Validator, email string) {
 	v.Check(validator.Matches(email, validator.EmailRX), "email", "must be a valid email addres")
 }
 
-func ValidatePasswordPlaintext(v *validator.Validator, password string) {
-	v.Check(password != "", "password", "must be provided")
-	v.Check(len(password) >= 8, "password", "must be atleast 8 bytes long")
-	v.Check(len(password) <= 72, "password", "must not be more than 72 bytes")
+func ValidatePasswordPlaintext(v *validator.Validator, password password) {
+	v.Check(*password.plaintext != "", "password", "must be provided")
+	v.Check(len(*password.plaintext) >= 8, "password", "must be atleast 8 bytes long")
+	v.Check(len(*password.plaintext) <= 72, "password", "must not be more than 72 bytes")
 }
 
 func ValidateUser(v *validator.Validator, user *User) {
@@ -71,7 +71,7 @@ func ValidateUser(v *validator.Validator, user *User) {
 	ValidateEmail(v, user.Email)
 
 	if user.Password.plaintext != nil {
-		ValidatePasswordPlaintext(v, *user.Password.plaintext)
+		ValidatePasswordPlaintext(v, user.Password)
 	}
 
 	if user.Password.hash == nil {
@@ -100,6 +100,29 @@ func (m UserModel) Insert(user *User) error {
 		switch {
 		case err.Error() == `pq: duplicate key value violates unique constraint "users_email_key"`:
 			return ErrDuplicateEmail
+		default:
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m UserModel) GetUserByEmail(user *User) error {
+	query := `
+        SELECT id, username, email, hashed_password
+        FROM users 
+        WHERE email = $1
+    `
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, user.Email).Scan(&user.ID, &user.Username, &user.Email, &user.Password.hash)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return ErrRecordNotFound
 		default:
 			return err
 		}

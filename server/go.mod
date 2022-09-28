@@ -7,3 +7,5 @@ require (
 	github.com/lib/pq v1.10.7
 	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
 )
+
+require github.com/cristalhq/jwt/v4 v4.0.2 // indirect

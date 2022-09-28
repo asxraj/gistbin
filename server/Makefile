@@ -7,7 +7,7 @@ include .envrc
 ## run/api: run the cmd/api application
 .PHONY: run/api
 run/api:
-	go run ./cmd/api -dsn=${GISTBIN_DB_DSN}
+	go run ./cmd/api -dsn=${GISTBIN_DB_DSN} -jwt-secret=${GISTBIN_JWT_SECRET}
 
 ## db/psql: connect to the database using psql
 .PHONY: db/psql

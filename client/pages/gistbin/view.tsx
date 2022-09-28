@@ -1,9 +1,9 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import Section from "../components/Section";
-import { humanDate, expiresDays } from "../utils/utils";
+import Navbar from "../../components/Navbar";
+import Section from "../../components/Section";
+import { humanDate, expiresDays } from "../../utils/utils";
 
 interface IGistbin {
   id: number;
@@ -49,17 +49,17 @@ const GistbinPage = () => {
       <Navbar />
       {gistbin ? (
         <div className="flex justify-center mt-10">
-          <div className="flex flex-col border-2 border-white w-[70%] rounded-md overflow-hidden">
-            <div className="flex justify-between p-4 bg-darkgray border-b-2">
+          <div className="flex flex-col border-2 border-white w-[70%] rounded-sm">
+            <div className="flex justify-between p-4 bg-slate-500">
               <p className="">TITLE: {gistbin?.title}</p>
               <p className="">CATEGORY: {gistbin?.category}</p>
             </div>
-            <div className="bg-darkgray p-4">
+            <div className="bg-slate-900 p-4">
               <pre className="text-sm whitespace-pre-wrap">
                 {gistbin?.content}
               </pre>
             </div>
-            <div className="flex justify-between p-4 bg-darkgray border-t-2">
+            <div className="flex justify-between p-4 bg-slate-500">
               <p>CREATED: {gistbin?.created_at}</p>
               <p>EXPIRES IN {gistbin?.expires} DAYS</p>
             </div>

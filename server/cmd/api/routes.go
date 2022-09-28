@@ -21,6 +21,7 @@ func (app *application) routes() http.Handler {
 
 	// User handlers
 	router.HandlerFunc(http.MethodPost, "/v1/users/create", app.createUser)
+	router.HandlerFunc(http.MethodPost, "/v1/users/login", app.loginUser)
 
 	return app.enableCORS(router)
 }

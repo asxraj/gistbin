@@ -21,6 +21,9 @@ type config struct {
 	port int
 	env  string
 	dsn  string
+	jwt  struct {
+		secret string
+	}
 }
 
 type application struct {
@@ -35,7 +38,8 @@ func main() {
 
 	flag.IntVar(&cfg.port, "port", 4000, "Server listens to port")
 	flag.StringVar(&cfg.env, "env", "development", "development|production|staging")
-	flag.StringVar(&cfg.dsn, "dsn", "", "PostgreSQL DSN")
+	flag.StringVar(&cfg.dsn, "dsn", "", "postgresql data source name")
+	flag.StringVar(&cfg.jwt.secret, "jwt-secret", "", "jwt secret")
 
 	flag.Parse()
 
