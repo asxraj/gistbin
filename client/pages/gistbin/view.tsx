@@ -1,21 +1,33 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Navbar from "../../components/Navbar";
 import Section from "../../components/Section";
-import { humanDate, expiresDays } from "../../utils/utils";
+import { AiFillDelete } from "react-icons/ai";
+import { AiFillEdit } from "react-icons/ai";
 
 import { IGistbin } from "../../utils/types";
 import Link from "next/link";
+import { UserContext } from "../../context/UserContext";
+import Modal from "../../components/Modal";
+import ModalConfirm from "../../components/ModalConfirm";
 
 const GistbinPage = () => {
+  const { jwt } = useContext(UserContext);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
   const [gistbins, setGistbins] = useState<IGistbin[]>();
+  const [gistbin, setGistbin] = useState<IGistbin>();
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const router = useRouter();
-  const { id } = router.query;
 
   useEffect(() => {
-    fetch(`http://localhost:4000/v1/gistbins`)
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    if (jwt) {
+      headers.append("Authorization", "Bearer " + jwt);
+    }
+    fetch(`http://localhost:4000/v1/gistbins`, {
+      headers: headers,
+    })
       .then((response) => {
         if (!response.ok) {
           return new Error("Could not fetch");
@@ -23,14 +35,43 @@ const GistbinPage = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         setGistbins(data.gistbins);
-        setIsLoaded(true);
-      });
-  }, []);
+        // setIsLoaded(true);
+      })
+      .catch((err) => console.log(err));
+  }, [jwt]);
+
+  const deleteHandler = () => {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    if (jwt) {
+      headers.append("Authorization", "Bearer " + jwt);
+    }
+
+    const requestOptions = {
+      method: "DELETE",
+      headers: headers,
+    };
+
+    fetch(
+      `http://localhost:4000/v1/gistbin/delete/${gistbin?.id}`,
+      requestOptions
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.response) {
+          setGistbins(gistbins?.filter((el) => el.id != gistbin?.id));
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   if (!isLoaded) {
-    return <p>Loading...</p>;
+    return (
+      <div className="min-h-screen w-full bg-algo">
+        <p>Loading...</p>;
+      </div>
+    );
   }
 
   return (
@@ -45,20 +86,43 @@ const GistbinPage = () => {
         <h1 className="text-2xl font-bold mb-5">My Gistibins</h1>
         <ul className="w-full bg-darkgray rounded-md overflow-hidden shadow-xl">
           {gistbins?.map((gistbin, index) => (
-            <Link href={`/gistbin/${gistbin.id}`} key={gistbin.id}>
-              <a>
-                <div
-                  className={`py-3 px-5 w-full ${
-                    index !== gistbins.length - 1 && "border-b border-gray-500"
-                  } transition-all hover:bg-gray-400 hover:text-darkgray cursor-pointer`}
-                >
-                  {gistbin.title}
-                </div>
-              </a>
-            </Link>
+            <div
+              key={gistbin.id}
+              className={`py-3 px-5 w-full flex items-center justify-between font-semibold ${
+                index !== gistbins.length - 1 && "border-b border-gray-500"
+              } transition-all `}
+            >
+              <Link href={`/gistbin/${gistbin.id}`} className="cursor-pointer">
+                <a>
+                  <p className="hover:text-blue-400">{gistbin.title}</p>
+                </a>
+              </Link>
+              <div className="flex gap-2 items-center">
+                <Link href={"/gistbin/edit"}>
+                  <a>
+                    <AiFillEdit className="w-6 h-6 text-blue-500" />
+                  </a>
+                </Link>
+                <AiFillDelete
+                  onClick={() => {
+                    setGistbin(gistbin);
+                    setIsDelete(true);
+                  }}
+                  className="w-6 h-6 text-red-500 cursor-pointer"
+                />
+              </div>
+            </div>
           ))}
         </ul>
       </div>
+      <ModalConfirm
+        question="Are you sure you want to delete?"
+        open={isDelete}
+        onClose={() => setIsDelete(false)}
+        confirm="Delete"
+        deny="Cancel"
+        action={() => deleteHandler()}
+      />
     </Section>
   );
 };

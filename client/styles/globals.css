@@ -7,10 +7,10 @@
 
 @layer components {
   .btn-primary {
-    @apply px-5 border-gray-300 font-semibold lg:py-3 py-2 border-2 ease-in duration-200 hover:bg-gray-300 hover:text-slate-900 rounded-sm;
+    @apply px-5 border-gray-300 font-semibold lg:py-3 py-2 border-2 ease-in duration-200 hover:bg-gray-300 hover:text-slate-900 rounded-md;
   }
   .btn-secondary {
-    @apply lg:px-5 px-2.5 border-gray-300 font-semibold lg:py-2 py-0.5 border-2 ease-in duration-200 hover:bg-gray-300 hover:text-slate-900 rounded-sm;
+    @apply lg:px-5 px-2.5 border-gray-300 font-semibold lg:py-2 py-0.5 border-2 ease-in duration-200 hover:bg-gray-300 hover:text-slate-900 rounded-md;
   }
 }
 

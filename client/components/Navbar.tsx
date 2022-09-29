@@ -6,8 +6,8 @@ import { AiOutlineCaretDown } from "react-icons/ai";
 import { AiOutlineCaretUp } from "react-icons/ai";
 import { FiLogOut } from "react-icons/fi";
 import { SiPastebin } from "react-icons/si";
-import { BsBucket } from "react-icons/bs";
 import Modal from "./Modal";
+import ModalConfirm from "./ModalConfirm";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -22,7 +22,9 @@ const Navbar = () => {
     }
   };
 
-  document.addEventListener("mousedown", closeOpenMenus);
+  if (typeof window !== "undefined") {
+    document.addEventListener("mousedown", closeOpenMenus);
+  }
 
   return (
     <>
@@ -99,55 +101,14 @@ const Navbar = () => {
           </div>
         )}
       </nav>
-      <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-        <>
-          <div className="md:flex flex-col gap-4 hidden">
-            <h1 className="text-gray-300 font-bold text-center">
-              Are you sure you want to log out
-            </h1>
-            <div className="flex my-5 mx-auto gap-8">
-              <button
-                className="px-10 py-3 bg-gray-300 rounded-md font-semibold text-algo hover:bg-white"
-                onClick={() => {
-                  logout();
-                  setIsOpen(false);
-                }}
-              >
-                Yes
-              </button>
-              <button
-                className="px-10 py-3 bg-gray-300 rounded-md font-semibold text-algo hover:bg-white"
-                onClick={() => setIsOpen(false)}
-              >
-                No
-              </button>
-            </div>
-          </div>
-
-          <div className="flex md:hidden flex-col ">
-            <h5 className="text-gray-300 font-semibold text-center text-sm">
-              Are you sure you want to logout?
-            </h5>
-            <div className="flex my-5 mx-auto gap-8">
-              <button
-                className="px-10 py-2 bg-gray-300 rounded-md font-semibold text-algo hover:bg-white"
-                onClick={() => {
-                  logout();
-                  setIsOpen(false);
-                }}
-              >
-                Yes
-              </button>
-              <button
-                className="px-8 py-2 bg-gray-300 rounded-md font-semibold text-algo hover:bg-white "
-                onClick={() => setIsOpen(false)}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </>
-      </Modal>
+      <ModalConfirm
+        question="Are you sure you want to logout?"
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        confirm="Logout"
+        deny="Cancel"
+        action={() => logout()}
+      />
     </>
   );
 };

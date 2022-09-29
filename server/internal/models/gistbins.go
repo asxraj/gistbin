@@ -20,6 +20,7 @@ type Gistbin struct {
 	Category  string    `json:"category"`
 	CreatedAt time.Time `json:"created_at"`
 	Expires   time.Time `json:"expires"`
+	UserID    int       `json:"user_id"`
 }
 
 func ValidateGistbin(v *validator.Validator, gistbin *Gistbin) {
@@ -34,13 +35,25 @@ func ValidateGistbin(v *validator.Validator, gistbin *Gistbin) {
 }
 
 func (m GistbinModel) Insert(gistbin *Gistbin) error {
-	query := `
+	var query string
+	if gistbin.UserID == 0 {
+		query = `
         INSERT INTO gistbins (title, content, category, expires)
         VALUES ($1, $2, $3, $4) 
         RETURNING id, created_at, expires
     `
+	} else {
+		query = `
+        INSERT INTO gistbins (title, content, category, expires, user_id)
+        VALUES ($1, $2, $3, $4, $5) 
+        RETURNING id, created_at, expires
+		`
+	}
 
-	args := []any{gistbin.Title, gistbin.Content, gistbin.Category, gistbin.Expires}
+	args := []any{gistbin.Title, gistbin.Content, gistbin.Category, gistbin.Expires, gistbin.UserID}
+	if gistbin.UserID == 0 {
+		args = args[:len(args)-1]
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -69,11 +82,12 @@ func (m GistbinModel) Get(id int64) (*Gistbin, error) {
 	return &gistbin, nil
 }
 
-func (m GistbinModel) GetAll() ([]*Gistbin, error) {
+func (m GistbinModel) GetAll(id int64) ([]*Gistbin, error) {
 	query := `
         SELECT id, title, content, expires
         FROM gistbins
 		WHERE now() < expires
+		AND user_id = $1
     `
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -81,7 +95,7 @@ func (m GistbinModel) GetAll() ([]*Gistbin, error) {
 
 	var gistbins []*Gistbin
 
-	rows, err := m.DB.QueryContext(ctx, query)
+	rows, err := m.DB.QueryContext(ctx, query, id)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +106,6 @@ func (m GistbinModel) GetAll() ([]*Gistbin, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		gistbins = append(gistbins, &gistbin)
 	}
 
@@ -101,4 +114,27 @@ func (m GistbinModel) GetAll() ([]*Gistbin, error) {
 	}
 
 	return gistbins, nil
+}
+
+func (m GistbinModel) Delete(id, user_id int64) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `DELETE FROM gistbins WHERE id = $1 AND user_id = $2`
+
+	result, err := m.DB.ExecContext(ctx, query, id, user_id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
+	return nil
 }

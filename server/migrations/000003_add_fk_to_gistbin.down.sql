@@ -1,0 +1,1 @@
+ALTER TABLE gistbins DROP COLUMN user_id;

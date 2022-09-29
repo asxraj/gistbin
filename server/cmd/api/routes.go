@@ -19,10 +19,11 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPost, "/v1/gistbin/create", app.createGistbin)
 	router.HandlerFunc(http.MethodGet, "/v1/gistbin/:id", app.viewGistbin)
 	router.HandlerFunc(http.MethodGet, "/v1/gistbins", app.getAllGistbins)
+	router.HandlerFunc(http.MethodDelete, "/v1/gistbin/delete/:id", app.requireAuthenticatedUser(app.deleteGistbin))
 
 	// User handlers
 	router.HandlerFunc(http.MethodPost, "/v1/users/create", app.createUser)
 	router.HandlerFunc(http.MethodPost, "/v1/users/login", app.loginUser)
 
-	return app.enableCORS(router)
+	return app.enableCORS(app.authenticate(router))
 }

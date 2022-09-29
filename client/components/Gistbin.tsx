@@ -11,7 +11,7 @@ interface error {
 
 const Gistbin = () => {
   const [errors, setErrors] = useState<error>();
-  const { jwt } = useContext(UserContext);
+  const { jwt, logout } = useContext(UserContext);
   const router = useRouter();
 
   const submitHandler = (e: any) => {
@@ -21,6 +21,9 @@ const Gistbin = () => {
     const payload = Object.fromEntries(data.entries());
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
+    if (jwt) {
+      headers.append("Authorization", "Bearer " + jwt);
+    }
 
     const requestOptions = {
       method: "POST",
@@ -30,24 +33,17 @@ const Gistbin = () => {
 
     fetch("http://localhost:4000/v1/gistbin/create", requestOptions)
       .then((response: Response) => {
-        console.log(response.status);
-
-        if (response.status === 201 || response.status === 422) {
-          return response.json();
-        }
-        return new Error("Something wrong happened");
+        return response.json();
       })
       .then((data: any) => {
+        console.log(data);
         if (data.error) {
           setErrors(data.error);
         } else if (data.gistbin) {
-          router.push(`/${data.gistbin.id}`);
+          router.push(`/gistbin/${data.gistbin.id}`);
         }
-        console.log(data);
       })
       .catch((err: Error) => console.log(err));
-
-    console.log(payload);
   };
 
   return (

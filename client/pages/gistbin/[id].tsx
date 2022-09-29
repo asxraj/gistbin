@@ -25,7 +25,6 @@ const GistbinPage = () => {
     fetch(`http://localhost:4000/v1/gistbin/${id}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setIsLoaded(true);
         if (data.gistbin) {
           data.gistbin.created_at = humanDate(data.gistbin.created_at);
@@ -49,13 +48,13 @@ const GistbinPage = () => {
       <Navbar />
       {gistbin ? (
         <div className="flex justify-center mt-20">
-          <div className="flex flex-col w-11/12 md:w-[90%] lg:w-[80%] xl:w-[70%] rounded-md overflow-hidden shadow-2xl ">
+          <div className="flex flex-col w-11/12 md:w-[90%] lg:w-[80%] xl:w-[80%] rounded-md overflow-hidden shadow-2xl mb-10">
             <div className="flex justify-between p-4 bg-darkgray border-b-2">
               <p className="text-sm md:text-base">{gistbin?.title}</p>
               <p className="text-sm md:text-base">{gistbin?.category}</p>
             </div>
             <div className="bg-darkgray p-4">
-              <pre className="text-sm whitespace-pre-wrap min-h-[250px]">
+              <pre className="text-sm whitespace-pre-wrap min-h-[250px] ">
                 {gistbin?.content}
               </pre>
             </div>

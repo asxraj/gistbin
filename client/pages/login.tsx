@@ -41,6 +41,8 @@ export default function Login() {
     fetch("http://localhost:4000/v1/users/login", requestOptions)
       .then((res) => res.json())
       .then((data: any) => {
+        console.log(data);
+
         if (data.error) {
           setErrors(data.error);
         } else if (data.token) {

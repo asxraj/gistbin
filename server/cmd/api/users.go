@@ -95,7 +95,7 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrRecordNotFound):
-			app.errorResponseJSON(w, r, http.StatusNotFound, "user not found")
+			app.errorResponseJSON(w, r, http.StatusNotFound, map[string]string{"email": "email not found"})
 			return
 		default:
 			app.serverErrorResponse(w, r, err)
@@ -110,7 +110,7 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !authenticated {
-		app.invalidCredentialsResponse(w, r)
+		app.errorResponseJSON(w, r, http.StatusUnauthorized, wrapper{"password": "wrong password"})
 		return
 	}
 
@@ -122,11 +122,10 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	claims := &jwt.RegisteredClaims{
-		// ID:        fmt.Sprint(user.ID),
 		Subject:   fmt.Sprint(user.ID),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		NotBefore: jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(2 * time.Minute)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 	}
 
 	token, err := jwt.NewBuilder(signer).Build(claims)
