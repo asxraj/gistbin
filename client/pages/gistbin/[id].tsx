@@ -61,7 +61,7 @@ const GistbinPage = () => {
             <div className="flex justify-between p-4 bg-darkgray border-t-2">
               <p className="text-sm md:text-base">{gistbin?.created_at}</p>
               <p className="text-sm md:text-base">
-                EXPIRES IN {gistbin?.expires} DAYS
+                EXPIRES IN {gistbin?.expires}
               </p>
             </div>
           </div>

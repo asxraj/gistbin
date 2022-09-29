@@ -36,7 +36,7 @@ const GistbinPage = () => {
       })
       .then((data) => {
         setGistbins(data.gistbins);
-        // setIsLoaded(true);
+        setIsLoaded(true);
       })
       .catch((err) => console.log(err));
   }, [jwt]);
@@ -68,8 +68,8 @@ const GistbinPage = () => {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen w-full bg-algo">
-        <p>Loading...</p>;
+      <div className="min-h-screen w-full bg-algo justify-center items-center">
+        <p className="text-white">Loading...</p>;
       </div>
     );
   }
