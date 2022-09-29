@@ -68,3 +68,37 @@ func (m GistbinModel) Get(id int64) (*Gistbin, error) {
 
 	return &gistbin, nil
 }
+
+func (m GistbinModel) GetAll() ([]*Gistbin, error) {
+	query := `
+        SELECT id, title, content, expires
+        FROM gistbins
+		WHERE now() < expires
+    `
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var gistbins []*Gistbin
+
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var gistbin Gistbin
+		err = rows.Scan(&gistbin.ID, &gistbin.Title, &gistbin.Content, &gistbin.Expires)
+		if err != nil {
+			return nil, err
+		}
+
+		gistbins = append(gistbins, &gistbin)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return gistbins, nil
+}

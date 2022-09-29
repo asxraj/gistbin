@@ -87,5 +87,18 @@ func (app *application) viewGistbin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
+}
 
+func (app *application) getAllGistbins(w http.ResponseWriter, r *http.Request) {
+
+	gistbins, err := app.models.Gistbins.GetAll()
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, wrapper{"gistbins": gistbins}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
