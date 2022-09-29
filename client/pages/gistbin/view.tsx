@@ -5,35 +5,29 @@ import Navbar from "../../components/Navbar";
 import Section from "../../components/Section";
 import { humanDate, expiresDays } from "../../utils/utils";
 
-interface IGistbin {
-  id: number;
-  title: string;
-  content: string;
-  category: string;
-  created_at: string;
-  expires: string;
-}
+import { IGistbin } from "../../utils/types";
+import Link from "next/link";
 
 const GistbinPage = () => {
-  const [gistbin, setGistbin] = useState<IGistbin>();
+  const [gistbins, setGistbins] = useState<IGistbin[]>();
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const router = useRouter();
   const { id } = router.query;
 
   useEffect(() => {
-    if (!id) return;
-    fetch(`http://localhost:4000/v1/gistbin/${id}`)
-      .then((response) => response.json())
+    fetch(`http://localhost:4000/v1/gistbins`)
+      .then((response) => {
+        if (!response.ok) {
+          return new Error("Could not fetch");
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log(data);
+        setGistbins(data.gistbins);
         setIsLoaded(true);
-        if (data.gistbin) {
-          data.gistbin.created_at = humanDate(data.gistbin.created_at);
-          data.gistbin.expires = expiresDays(data.gistbin.expires);
-          setGistbin(data.gistbin);
-        }
       });
-  }, [id]);
+  }, []);
 
   if (!isLoaded) {
     return <p>Loading...</p>;
@@ -42,36 +36,29 @@ const GistbinPage = () => {
   return (
     <Section>
       <Head>
-        <title>{`Gistbin | ${id}`}</title>
+        <title>{`Gistbin | My Gistbins`}</title>
         <meta name="description" content="Gistbin project made by asxraj" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      {gistbin ? (
-        <div className="flex justify-center mt-10">
-          <div className="flex flex-col border-2 border-white w-[70%] rounded-sm">
-            <div className="flex justify-between p-4 bg-slate-500">
-              <p className="">TITLE: {gistbin?.title}</p>
-              <p className="">CATEGORY: {gistbin?.category}</p>
-            </div>
-            <div className="bg-slate-900 p-4">
-              <pre className="text-sm whitespace-pre-wrap">
-                {gistbin?.content}
-              </pre>
-            </div>
-            <div className="flex justify-between p-4 bg-slate-500">
-              <p>CREATED: {gistbin?.created_at}</p>
-              <p>EXPIRES IN {gistbin?.expires} DAYS</p>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="p-5">
-          <h1>No gistbin exists for ID: {id}</h1>
-        </div>
-      )}
-
-      {/* <Footer /> */}
+      <div className="flex flex-col w-[100%] xl:w-[70%] mx-auto justify-center p-5 mt-20">
+        <h1 className="text-2xl font-bold mb-5">My Gistibins</h1>
+        <ul className="w-full bg-darkgray rounded-md overflow-hidden shadow-xl">
+          {gistbins?.map((gistbin, index) => (
+            <Link href={`/gistbin/${gistbin.id}`} key={gistbin.id}>
+              <a>
+                <div
+                  className={`py-3 px-5 w-full ${
+                    index !== gistbins.length - 1 && "border-b border-gray-500"
+                  } transition-all hover:bg-gray-400 hover:text-darkgray cursor-pointer`}
+                >
+                  {gistbin.title}
+                </div>
+              </a>
+            </Link>
+          ))}
+        </ul>
+      </div>
     </Section>
   );
 };

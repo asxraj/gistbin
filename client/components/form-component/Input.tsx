@@ -16,7 +16,10 @@ const Input = ({
   return (
     <div className={`flex flex-col`}>
       <div className="flex items-center gap-4">
-        <label htmlFor={name} className="text-xl font-semibold my-5">
+        <label
+          htmlFor={name}
+          className="text-lg lg:text-xl font-semibold my-3 lg:my-5"
+        >
           {title}:
         </label>
         <label className="text-xs text-red-400 opacity-75">{errorMsg}</label>
@@ -24,7 +27,7 @@ const Input = ({
       <input
         type={type}
         name={name}
-        className={`p-3 focus:outline-none caret-slate-900 text-slate-900 text-sm w-[500px] rounded-sm ${
+        className={`p-2 lg:p-3 focus:outline-none caret-white bg-darkgray text-gray-300 text-sm w-[300px] lg:w-[500px] rounded-sm ${
           hasError ? "border-2 border-red-400" : ""
         }`}
       />

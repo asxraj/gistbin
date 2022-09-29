@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Head from "next/head";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -7,10 +7,19 @@ import { useRouter } from "next/router";
 import Input from "../components/form-component/Input";
 
 import { FormErrors } from "../utils/types";
+import { UserContext } from "../context/UserContext";
 
 export default function Signup() {
+  const { jwt } = useContext(UserContext);
+
   const [errors, setErrors] = useState<FormErrors>();
   const router = useRouter();
+
+  useEffect(() => {
+    if (jwt !== "") {
+      router.push("/");
+    }
+  }, []);
 
   const submitHandler = (e: any) => {
     e.preventDefault();

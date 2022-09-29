@@ -1,9 +1,9 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import Section from "../components/Section";
-import { humanDate, expiresDays } from "../utils/utils";
+import Navbar from "../../components/Navbar";
+import Section from "../../components/Section";
+import { humanDate, expiresDays } from "../../utils/utils";
 
 interface IGistbin {
   id: number;
@@ -48,20 +48,22 @@ const GistbinPage = () => {
       </Head>
       <Navbar />
       {gistbin ? (
-        <div className="flex justify-center mt-10">
-          <div className="flex flex-col border-2 border-white w-[70%] rounded-md overflow-hidden">
+        <div className="flex justify-center mt-20">
+          <div className="flex flex-col w-11/12 md:w-[90%] lg:w-[80%] xl:w-[70%] rounded-md overflow-hidden shadow-2xl ">
             <div className="flex justify-between p-4 bg-darkgray border-b-2">
-              <p className="">TITLE: {gistbin?.title}</p>
-              <p className="">CATEGORY: {gistbin?.category}</p>
+              <p className="text-sm md:text-base">{gistbin?.title}</p>
+              <p className="text-sm md:text-base">{gistbin?.category}</p>
             </div>
             <div className="bg-darkgray p-4">
-              <pre className="text-sm whitespace-pre-wrap">
+              <pre className="text-sm whitespace-pre-wrap min-h-[250px]">
                 {gistbin?.content}
               </pre>
             </div>
             <div className="flex justify-between p-4 bg-darkgray border-t-2">
-              <p>CREATED: {gistbin?.created_at}</p>
-              <p>EXPIRES IN {gistbin?.expires} DAYS</p>
+              <p className="text-sm md:text-base">{gistbin?.created_at}</p>
+              <p className="text-sm md:text-base">
+                EXPIRES IN {gistbin?.expires} DAYS
+              </p>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { UserContext } from "../context/UserContext";
 import { AiOutlineCaretDown } from "react-icons/ai";
@@ -12,8 +12,17 @@ import Modal from "./Modal";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [toggle, setToggle] = useState<boolean>(false);
+  const bar = useRef<any>();
   const router = useRouter();
   const { jwt, user, logout } = useContext(UserContext);
+
+  const closeOpenMenus = (e: Event) => {
+    if (bar.current && toggle && !bar.current.contains(e.target)) {
+      setToggle(false);
+    }
+  };
+
+  document.addEventListener("mousedown", closeOpenMenus);
 
   return (
     <>
@@ -27,7 +36,7 @@ const Navbar = () => {
           </Link>
         </div>
         {jwt === "" && (
-          <div className="flex gap-6 items-center">
+          <div className="flex lg:gap-6 gap-3 items-center">
             <Link href="/login" className="">
               <a
                 className={`btn-secondary ${
@@ -50,9 +59,9 @@ const Navbar = () => {
           </div>
         )}
         {jwt !== "" && (
-          <div className="flex gap-3 items-center relative">
-            <div className="flex items-center justify-center w-10 h-10 bg-black font-bold rounded-full">
-              U
+          <div className="flex gap-1.5 md:gap-3 items-center relative">
+            <div className="flex items-center justify-center md:w-10 w-7 md:h-10 h-7 text-sm md:text-base bg-black font-bold rounded-full">
+              <p className="select-none">{user.username[0].toUpperCase()}</p>
             </div>
             <div className="">
               <div
@@ -64,7 +73,10 @@ const Navbar = () => {
               </div>
 
               {toggle && (
-                <div className="font-semibold bg-slate-700 flex flex-col absolute p-3 py-5 z-50 rounded-md bg-opacity-80 top-14 right-0 mx-6 min-w-[170px] transition-all">
+                <div
+                  ref={bar}
+                  className="font-semibold bg-slate-700 flex flex-col absolute p-3 py-5 z-50 rounded-md bg-opacity-80 top-14 right-0 mx-6 min-w-[170px] transition-all"
+                >
                   <div className="flex flex-col gap-2">
                     <div className="flex justce items-center gap-2 cursor-pointer list-none hover:bg-slate-900 px-3 py-2 rounded-md transition-all">
                       <SiPastebin />
@@ -88,28 +100,53 @@ const Navbar = () => {
         )}
       </nav>
       <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-        <div className="flex flex-col gap-4">
-          <h1 className="text-white font-bold text-center">
-            Are you sure you want to log out
-          </h1>
-          <div className="flex my-10 mx-auto gap-8">
-            <button
-              className="px-10 py-3 bg-white rounded-md font-semibold text-algo"
-              onClick={() => {
-                logout();
-                setIsOpen(false);
-              }}
-            >
-              Yes
-            </button>
-            <button
-              className="px-10 py-3 bg-white rounded-md font-semibold text-algo "
-              onClick={() => setIsOpen(false)}
-            >
-              No
-            </button>
+        <>
+          <div className="md:flex flex-col gap-4 hidden">
+            <h1 className="text-gray-300 font-bold text-center">
+              Are you sure you want to log out
+            </h1>
+            <div className="flex my-5 mx-auto gap-8">
+              <button
+                className="px-10 py-3 bg-gray-300 rounded-md font-semibold text-algo hover:bg-white"
+                onClick={() => {
+                  logout();
+                  setIsOpen(false);
+                }}
+              >
+                Yes
+              </button>
+              <button
+                className="px-10 py-3 bg-gray-300 rounded-md font-semibold text-algo hover:bg-white"
+                onClick={() => setIsOpen(false)}
+              >
+                No
+              </button>
+            </div>
           </div>
-        </div>
+
+          <div className="flex md:hidden flex-col ">
+            <h5 className="text-gray-300 font-semibold text-center text-sm">
+              Are you sure you want to logout?
+            </h5>
+            <div className="flex my-5 mx-auto gap-8">
+              <button
+                className="px-10 py-2 bg-gray-300 rounded-md font-semibold text-algo hover:bg-white"
+                onClick={() => {
+                  logout();
+                  setIsOpen(false);
+                }}
+              >
+                Yes
+              </button>
+              <button
+                className="px-8 py-2 bg-gray-300 rounded-md font-semibold text-algo hover:bg-white "
+                onClick={() => setIsOpen(false)}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </>
       </Modal>
     </>
   );
