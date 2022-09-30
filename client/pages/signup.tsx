@@ -8,6 +8,7 @@ import Input from "../components/form-component/Input";
 
 import { FormErrors } from "../utils/types";
 import { UserContext } from "../context/UserContext";
+import { REACT_API_URL } from "../utils/utils";
 
 export default function Signup() {
   const { jwt } = useContext(UserContext);
@@ -19,7 +20,7 @@ export default function Signup() {
     if (jwt !== "") {
       router.push("/");
     }
-  }, []);
+  }, [jwt, router]);
 
   const submitHandler = (e: any) => {
     e.preventDefault();
@@ -28,7 +29,6 @@ export default function Signup() {
     const payload = Object.fromEntries(data.entries());
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
-    console.log(payload);
 
     const requestOptions = {
       method: "POST",
@@ -36,7 +36,7 @@ export default function Signup() {
       headers: headers,
     };
 
-    fetch("http://localhost:4000/v1/users/create", requestOptions)
+    fetch(`${REACT_API_URL}/v1/users/create`, requestOptions)
       .then((res) => {
         if (res.status === 201 || res.status === 422) {
           return res.json();
@@ -47,12 +47,12 @@ export default function Signup() {
         if (data.error) {
           setErrors(data.error);
         } else if (data.user) {
-          console.log(data.user);
           setErrors({});
           router.push("/login");
         }
       })
       .catch((err) => console.log(err.message));
+    e.target.reset();
   };
 
   return (

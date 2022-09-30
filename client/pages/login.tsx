@@ -10,6 +10,7 @@ import Footer from "../components/Footer";
 import Section from "../components/Section";
 import { useRouter } from "next/router";
 import { FormErrors } from "../utils/types";
+import { REACT_API_URL } from "../utils/utils";
 
 export default function Login() {
   const { jwt, setJwt, setUser } = useContext(UserContext);
@@ -20,7 +21,7 @@ export default function Login() {
     if (jwt !== "") {
       router.push("/");
     }
-  }, []);
+  }, [jwt, router]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -30,19 +31,15 @@ export default function Login() {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
 
-    console.log(payload);
-
     const requestOptions = {
       method: "POST",
       body: JSON.stringify(payload, null, 2),
       headers: headers,
     };
 
-    fetch("http://localhost:4000/v1/users/login", requestOptions)
+    fetch(`${REACT_API_URL}/v1/users/login`, requestOptions)
       .then((res) => res.json())
       .then((data: any) => {
-        console.log(data);
-
         if (data.error) {
           setErrors(data.error);
         } else if (data.token) {
@@ -50,7 +47,6 @@ export default function Login() {
           localStorage.setItem("jwt", data.token);
           setUser(data.user);
           localStorage.setItem("user", JSON.stringify(data.user));
-          console.log(data.user);
           router.push("/");
         }
       })

@@ -1,16 +1,13 @@
+import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
+import { User } from "../utils/types";
 
 export const UserContext = React.createContext<any>(undefined);
-
-interface User {
-  ID?: number;
-  Username?: string;
-  Email?: string;
-}
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User>();
   const [jwt, setJwt] = useState<string>("");
+  const router = useRouter();
 
   useEffect(() => {
     let t: any = localStorage.getItem("jwt");
@@ -29,6 +26,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setJwt("");
     setUser({});
     localStorage.removeItem("user");
+    router.push("/");
   };
 
   return (

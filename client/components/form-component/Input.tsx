@@ -27,7 +27,7 @@ const Input = ({
       <input
         type={type}
         name={name}
-        className={`p-2 lg:p-3 focus:outline-none caret-white bg-darkgray text-gray-300 text-sm w-[300px] lg:w-[500px] rounded-sm ${
+        className={`p-2 lg:p-3 focus:outline-none focus:border-2 focus:border-blue-400 caret-white bg-darkgray text-gray-300 text-sm w-[300px] lg:w-[500px] rounded-md focus-within:bg-darkgray ${
           hasError ? "border-2 border-red-400" : ""
         }`}
       />

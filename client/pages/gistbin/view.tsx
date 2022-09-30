@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
 import React, { useState, useEffect, useContext } from "react";
 import Navbar from "../../components/Navbar";
 import Section from "../../components/Section";
@@ -9,8 +8,8 @@ import { AiFillEdit } from "react-icons/ai";
 import { IGistbin } from "../../utils/types";
 import Link from "next/link";
 import { UserContext } from "../../context/UserContext";
-import Modal from "../../components/Modal";
 import ModalConfirm from "../../components/ModalConfirm";
+import { REACT_API_URL } from "../../utils/utils";
 
 const GistbinPage = () => {
   const { jwt } = useContext(UserContext);
@@ -25,7 +24,7 @@ const GistbinPage = () => {
     if (jwt) {
       headers.append("Authorization", "Bearer " + jwt);
     }
-    fetch(`http://localhost:4000/v1/gistbins`, {
+    fetch(`${REACT_API_URL}/v1/gistbins`, {
       headers: headers,
     })
       .then((response) => {
@@ -53,10 +52,7 @@ const GistbinPage = () => {
       headers: headers,
     };
 
-    fetch(
-      `http://localhost:4000/v1/gistbin/delete/${gistbin?.id}`,
-      requestOptions
-    )
+    fetch(`${REACT_API_URL}/v1/gistbin/delete/${gistbin?.id}`, requestOptions)
       .then((res) => res.json())
       .then((data) => {
         if (data.response) {
@@ -84,6 +80,7 @@ const GistbinPage = () => {
       <Navbar />
       <div className="flex flex-col w-[100%] xl:w-[70%] mx-auto justify-center p-5 mt-20">
         <h1 className="text-2xl font-bold mb-5">My Gistibins</h1>
+        {!jwt && <p>You have to be signed in to save and view your gists</p>}
         <ul className="w-full bg-darkgray rounded-md overflow-hidden shadow-xl">
           {gistbins?.map((gistbin, index) => (
             <div
@@ -98,7 +95,7 @@ const GistbinPage = () => {
                 </a>
               </Link>
               <div className="flex gap-2 items-center">
-                <Link href={"/gistbin/edit"}>
+                <Link href={`/gistbin/edit/${gistbin.id}`}>
                   <a>
                     <AiFillEdit className="w-6 h-6 text-blue-500" />
                   </a>

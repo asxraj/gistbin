@@ -3,16 +3,8 @@ import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Section from "../../components/Section";
-import { humanDate, expiresDays } from "../../utils/utils";
-
-interface IGistbin {
-  id: number;
-  title: string;
-  content: string;
-  category: string;
-  created_at: string;
-  expires: string;
-}
+import { humanDate, expiresDays, REACT_API_URL } from "../../utils/utils";
+import { IGistbin } from "../../utils/types";
 
 const GistbinPage = () => {
   const [gistbin, setGistbin] = useState<IGistbin>();
@@ -22,7 +14,7 @@ const GistbinPage = () => {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`http://localhost:4000/v1/gistbin/${id}`)
+    fetch(`${REACT_API_URL}/v1/gistbin/${id}`)
       .then((response) => response.json())
       .then((data) => {
         setIsLoaded(true);

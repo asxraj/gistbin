@@ -4,6 +4,8 @@ import React, { useContext, useState } from "react";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 import { UserContext } from "../context/UserContext";
 
+import { REACT_API_URL } from "../utils/utils";
+
 interface error {
   title: string;
   content: string;
@@ -11,7 +13,7 @@ interface error {
 
 const Gistbin = () => {
   const [errors, setErrors] = useState<error>();
-  const { jwt, logout } = useContext(UserContext);
+  const { jwt } = useContext(UserContext);
   const router = useRouter();
 
   const submitHandler = (e: any) => {
@@ -31,12 +33,11 @@ const Gistbin = () => {
       headers: headers,
     };
 
-    fetch("http://localhost:4000/v1/gistbin/create", requestOptions)
+    fetch(`${REACT_API_URL}/v1/gistbin/create`, requestOptions)
       .then((response: Response) => {
         return response.json();
       })
       .then((data: any) => {
-        console.log(data);
         if (data.error) {
           setErrors(data.error);
         } else if (data.gistbin) {
