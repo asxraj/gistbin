@@ -18,7 +18,8 @@ func (app *application) routes() http.Handler {
 	// Gistbin handlers
 	router.HandlerFunc(http.MethodPost, "/v1/gistbin/create", app.createGistbin)
 	router.HandlerFunc(http.MethodGet, "/v1/gistbin/:id", app.viewGistbin)
-	router.HandlerFunc(http.MethodGet, "/v1/gistbins", app.getAllGistbins)
+	router.HandlerFunc(http.MethodGet, "/v1/gistbins", app.getMyGistbins)
+	router.HandlerFunc(http.MethodPatch, "/v1/gistbin/edit/:id", app.requireAuthenticatedUser(app.updateGistbin))
 	router.HandlerFunc(http.MethodDelete, "/v1/gistbin/delete/:id", app.requireAuthenticatedUser(app.deleteGistbin))
 
 	// User handlers

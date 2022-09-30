@@ -62,14 +62,18 @@ func (m GistbinModel) Insert(gistbin *Gistbin) error {
 }
 
 func (m GistbinModel) Get(id int64) (*Gistbin, error) {
-	query := "SELECT title, content, category, created_at, expires FROM gistbins WHERE id = $1 AND now() < expires"
+	query := `
+		SELECT id, title, content, category, created_at, expires, user_id 
+		FROM gistbins 
+		WHERE id = $1 AND now() < expires
+	`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	var gistbin Gistbin
 
-	err := m.DB.QueryRowContext(ctx, query, id).Scan(&gistbin.Title, &gistbin.Content, &gistbin.Category, &gistbin.CreatedAt, &gistbin.Expires)
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(&gistbin.ID, &gistbin.Title, &gistbin.Content, &gistbin.Category, &gistbin.CreatedAt, &gistbin.Expires, &gistbin.UserID)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -88,6 +92,7 @@ func (m GistbinModel) GetAll(id int64) ([]*Gistbin, error) {
         FROM gistbins
 		WHERE now() < expires
 		AND user_id = $1
+		ORDER BY id
     `
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -114,6 +119,37 @@ func (m GistbinModel) GetAll(id int64) ([]*Gistbin, error) {
 	}
 
 	return gistbins, nil
+}
+
+func (m GistbinModel) Update(gistbin *Gistbin) error {
+	query := `
+        UPDATE gistbins 
+        SET title = $1, content = $2, category = $3, expires = $4
+        WHERE id = $5
+    `
+
+	args := []any{
+		gistbin.Title,
+		gistbin.Content,
+		gistbin.Category,
+		gistbin.Expires,
+		gistbin.ID,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := m.DB.ExecContext(ctx, query, args...)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return ErrEditConflict
+		default:
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (m GistbinModel) Delete(id, user_id int64) error {

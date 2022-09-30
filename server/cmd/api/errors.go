@@ -44,11 +44,6 @@ func (app *application) failedValidationResponse(w http.ResponseWriter, r *http.
 	app.errorResponseJSON(w, r, http.StatusUnprocessableEntity, errors)
 }
 
-func (app *application) invalidCredentialsResponse(w http.ResponseWriter, r *http.Request) {
-	message := "invalid authentication credentials"
-	app.errorResponseJSON(w, r, http.StatusUnauthorized, message)
-}
-
 func (app *application) invalidAuthenticationTokenResponse(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("WWW-Authenticate", "Bearer")
 
@@ -64,4 +59,9 @@ func (app *application) notPermittedResponse(w http.ResponseWriter, r *http.Requ
 func (app *application) authenticationRequiredResponse(w http.ResponseWriter, r *http.Request) {
 	message := "you must be authenticated to access this resource"
 	app.errorResponseJSON(w, r, http.StatusUnauthorized, message)
+}
+
+func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Request) {
+	message := "unable to update the record due to an edit conflict, please try again"
+	app.errorResponseJSON(w, r, http.StatusConflict, message)
 }

@@ -33,14 +33,13 @@ func (app *application) createGistbin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expires := time.Now().Add(time.Duration(minutes) * time.Minute)
 	user := app.contextGetUser(r)
 
 	gistbin := &models.Gistbin{
 		Title:    input.Title,
 		Content:  input.Content,
 		Category: input.Category,
-		Expires:  expires,
+		Expires:  time.Now().Add(time.Duration(minutes) * time.Minute),
 		UserID:   int(user.ID),
 	}
 
@@ -102,6 +101,79 @@ func (app *application) getMyGistbins(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = app.writeJSON(w, http.StatusOK, wrapper{"gistbins": gistbins}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) updateGistbin(w http.ResponseWriter, r *http.Request) {
+
+	id, err := strconv.ParseInt(httprouter.ParamsFromContext(r.Context()).ByName("id"), 10, 64)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	gistbin, err := app.models.Gistbins.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	if user := app.contextGetUser(r); gistbin.UserID != int(user.ID) {
+		app.errorResponseJSON(w, r, http.StatusUnauthorized, "not the creator of gistbin")
+		return
+	}
+
+	var input struct {
+		Title    string `json:"title"`
+		Content  string `json:"content"`
+		Category string `json:"category"`
+		Expires  string `json:"expires"`
+	}
+
+	err = app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	minutes, err := strconv.Atoi(input.Expires)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	gistbin.Title = input.Title
+	gistbin.Content = input.Content
+	gistbin.Category = input.Category
+	gistbin.Expires = gistbin.Expires.Add(time.Duration(minutes) * time.Minute)
+
+	v := validator.New()
+
+	if models.ValidateGistbin(v, gistbin); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	err = app.models.Gistbins.Update(gistbin)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrEditConflict):
+			app.editConflictResponse(w, r)
+			return
+		default:
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+	}
+
+	err = app.writeJSON(w, http.StatusOK, wrapper{"response": "ok", "message": "gistbin successfully edited", "gistbin": gistbin}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
