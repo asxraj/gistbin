@@ -5,15 +5,22 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/asxraj/gistbin/internal/models/mocks"
+	"github.com/joho/godotenv"
 )
 
 func newTestApplication(t *testing.T) *application {
+	var cfg config
+	godotenv.Load("../../.env")
+	cfg.jwt.secret = os.Getenv("JWT_SECRET")
+
 	return &application{
 		models: mocks.NewModels(),
+		config: cfg,
 	}
 }
 

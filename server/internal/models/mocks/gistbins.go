@@ -15,6 +15,15 @@ var mockGistbin = &models.Gistbin{
 	Expires:   time.Now(),
 }
 
+var mostTobeInsertedGistbin = &models.Gistbin{
+	ID:        1,
+	Title:     "test.go",
+	Content:   "to be inserted",
+	Category:  "Coding",
+	CreatedAt: time.Now(),
+	Expires:   time.Now(),
+}
+
 type GistbinModel struct{}
 
 func (m GistbinModel) Insert(gistbin *models.Gistbin) error {

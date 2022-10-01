@@ -17,7 +17,6 @@ func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
 		Username string `json:"username"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
-		Confirm  string `json:"confirm"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -39,7 +38,6 @@ func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
 
 	v := validator.New()
 	models.ValidateUser(v, user)
-	v.Check(input.Password == input.Confirm, "password", "passwords must match")
 
 	if !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
@@ -95,7 +93,7 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrRecordNotFound):
-			app.errorResponseJSON(w, r, http.StatusNotFound, map[string]string{"email": "email not found"})
+			app.errorResponseJSON(w, r, http.StatusUnauthorized, map[string]string{"email": "email not found"})
 			return
 		default:
 			app.serverErrorResponse(w, r, err)

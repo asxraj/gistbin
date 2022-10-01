@@ -14,7 +14,6 @@ func (app *application) routes() http.Handler {
 	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthCheckHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/ping", app.ping)
 
 	// Gistbin handlers
 	router.HandlerFunc(http.MethodPost, "/v1/gistbin/create", app.createGistbin)

@@ -12,6 +12,7 @@ import (
 
 	"github.com/asxraj/gistbin/internal/models"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -36,10 +37,16 @@ type application struct {
 func main() {
 	var cfg config
 
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	cfg.jwt.secret = os.Getenv("JWT_SECRET")
+	cfg.dsn = os.Getenv("GISTBIN_DB_DSN")
+
 	flag.IntVar(&cfg.port, "port", 4000, "Server listens to port")
 	flag.StringVar(&cfg.env, "env", "development", "development|production|staging")
-	flag.StringVar(&cfg.dsn, "dsn", "", "postgresql data source name")
-	flag.StringVar(&cfg.jwt.secret, "jwt-secret", "", "jwt secret")
 
 	flag.Parse()
 
