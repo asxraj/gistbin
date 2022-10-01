@@ -9,6 +9,11 @@ include .envrc
 run/api:
 	go run ./cmd/api -dsn=${GISTBIN_DB_DSN} -jwt-secret=${GISTBIN_JWT_SECRET}
 
+## test: run the cmd/api application
+.PHONY: test
+test:
+	go test -v ./cmd/api -dsn=${GISTBIN_DB_DSN} -jwt-secret=${GISTBIN_JWT_SECRET}
+
 ## db/psql: connect to the database using psql
 .PHONY: db/psql
 db/psql:
