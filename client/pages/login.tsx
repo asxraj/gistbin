@@ -28,6 +28,20 @@ export default function Login() {
 
     const data = new FormData(e.target);
     const payload = Object.fromEntries(data.entries());
+
+    let err;
+    if (!payload.email) {
+      err = { email: "must be provided" };
+    }
+
+    if (!payload.password) {
+      err = { ...err, password: "must be provided" };
+    }
+    if (err) {
+      setErrors(err);
+      return;
+    }
+
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
 

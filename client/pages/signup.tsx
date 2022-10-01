@@ -27,6 +27,23 @@ export default function Signup() {
 
     const data = new FormData(e.target);
     const payload = Object.fromEntries(data.entries());
+
+    let err;
+    if (!payload.username) {
+      err = { username: "must be provided" };
+    }
+    if (!payload.email) {
+      err = { ...err, email: "must be provided" };
+    }
+
+    if (payload.confirm != payload.password) {
+      err = { ...err, password: "passwords does not match" };
+    }
+    if (err) {
+      setErrors(err);
+      return;
+    }
+
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
 

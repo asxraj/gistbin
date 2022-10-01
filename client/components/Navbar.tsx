@@ -51,7 +51,7 @@ const Navbar = () => {
 
             <Link href="/signup">
               <a
-                className={`btn-secondary ${
+                className={`btn-secondary bg-blue-600 border-blue-600 hover:bg-blue-700 hover:border-blue-700 hover:text-white ${
                   router.pathname === "/signup" ? "hidden" : ""
                 }`}
               >
