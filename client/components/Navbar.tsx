@@ -6,7 +6,6 @@ import { AiOutlineCaretDown } from "react-icons/ai";
 import { AiOutlineCaretUp } from "react-icons/ai";
 import { FiLogOut } from "react-icons/fi";
 import { SiPastebin } from "react-icons/si";
-import Modal from "./Modal";
 import ModalConfirm from "./ModalConfirm";
 
 const Navbar = () => {
@@ -41,7 +40,7 @@ const Navbar = () => {
           <div className="flex lg:gap-6 gap-3 items-center">
             <Link href="/login" className="">
               <a
-                className={`btn-secondary ${
+                className={`btn-secondary bg-gray-300 border-gray-300 text-algo hover:border-gray-400 hover:bg-gray-400 ${
                   router.pathname === "/login" ? "hidden" : ""
                 }`}
               >

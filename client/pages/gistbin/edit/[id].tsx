@@ -5,7 +5,7 @@ import Navbar from "../../../components/Navbar";
 import Section from "../../../components/Section";
 import { UserContext } from "../../../context/UserContext";
 import { IGistbin } from "../../../utils/types";
-import { REACT_API_URL } from "../../../utils/utils";
+import { REACT_API_URL } from "../../../utils/constants";
 
 const EditGistbin = () => {
   const { jwt, user } = useContext(UserContext);

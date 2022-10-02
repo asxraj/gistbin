@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Section from "../../components/Section";
-import { humanDate, expiresDays, REACT_API_URL } from "../../utils/utils";
+import { humanDate, expiresDays } from "../../utils/utils";
+import { REACT_API_URL } from "../../utils/constants";
 import { IGistbin } from "../../utils/types";
 
 const GistbinPage = () => {

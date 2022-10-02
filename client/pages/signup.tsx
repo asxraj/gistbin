@@ -1,18 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import Head from "next/head";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import Section from "../components/Section";
 import { useRouter } from "next/router";
 import Input from "../components/form-component/Input";
 
 import { FormErrors } from "../utils/types";
 import { UserContext } from "../context/UserContext";
-import { REACT_API_URL } from "../utils/utils";
+import { REACT_API_URL } from "../utils/constants";
 
 export default function Signup() {
   const { jwt } = useContext(UserContext);
-
   const [errors, setErrors] = useState<FormErrors>();
   const router = useRouter();
 
@@ -44,14 +42,18 @@ export default function Signup() {
       return;
     }
 
+    delete payload.confirm;
+
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
 
     const requestOptions = {
       method: "POST",
-      body: JSON.stringify(payload, null, 2),
+      body: JSON.stringify(payload),
       headers: headers,
     };
+
+    console.log(payload);
 
     fetch(`${REACT_API_URL}/v1/users/create`, requestOptions)
       .then((res) => {
@@ -118,7 +120,6 @@ export default function Signup() {
           </button>
         </form>
       </div>
-      <Footer />
     </Section>
   );
 }

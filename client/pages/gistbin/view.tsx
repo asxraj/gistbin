@@ -9,7 +9,7 @@ import { IGistbin } from "../../utils/types";
 import Link from "next/link";
 import { UserContext } from "../../context/UserContext";
 import ModalConfirm from "../../components/ModalConfirm";
-import { REACT_API_URL } from "../../utils/utils";
+import { REACT_API_URL } from "../../utils/constants";
 
 const GistbinPage = () => {
   const { jwt } = useContext(UserContext);

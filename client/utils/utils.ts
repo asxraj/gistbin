@@ -1,5 +1,3 @@
-export const REACT_API_URL = "http://localhost:4000";
-
 export const humanDate = (date: string): string => {
   const created = new Date(Date.parse(date));
   return `${created.toLocaleDateString("default", {

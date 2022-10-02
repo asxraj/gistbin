@@ -16,7 +16,6 @@ func (app *application) errorResponseJSON(w http.ResponseWriter, r *http.Request
 		app.errorLog.Println(err)
 		w.WriteHeader(500)
 	}
-
 }
 
 func (app *application) serverErrorResponse(w http.ResponseWriter, r *http.Request, err error) {

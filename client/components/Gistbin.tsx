@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import React, { useContext, useState } from "react";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 import { UserContext } from "../context/UserContext";
-
-import { REACT_API_URL } from "../utils/utils";
+import { REACT_API_URL } from "../utils/constants";
 
 interface error {
   title: string;

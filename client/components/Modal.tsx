@@ -9,7 +9,7 @@ const Modal = ({
 }: {
   open: boolean;
   children: JSX.Element;
-  onClose: any;
+  onClose: React.MouseEventHandler<any> | undefined;
 }) => {
   if (!open) return null;
   return ReactDOM.createPortal(

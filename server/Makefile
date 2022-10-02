@@ -1,5 +1,9 @@
 include .envrc
 
+# ==================================================================================== #
+# HELPERS
+# ==================================================================================== #
+
 ## help: print this help message
 .PHONY: help
 help:
@@ -47,3 +51,60 @@ db/migrations/up: confirm
 db/migrations/down: confirm
 	@echo 'Running down migrations...'
 	migrate -path ./migrations -database ${GISTBIN_DB_DSN} down
+
+
+# ==================================================================================== #
+# QUALITY CONTROL
+# ==================================================================================== #
+## audit: tidy dependencies and format, vet and test all code
+.PHONY: audit
+audit:
+	@echo 'Tidying and verifying module dependencies...'
+	go mod tidy
+	go mod verify
+	@echo 'Formatting code...'
+	go fmt ./...
+	@echo 'Vetting code...'
+	go vet ./...
+	@echo 'Running tests...'
+	go test -race -vet=off ./...
+
+
+# ==================================================================================== #
+# BUILD
+# ==================================================================================== #
+
+## build/api: build the cmd/api application
+.PHONY: build/api
+build/api:
+	@echo 'Building cmd/api...'
+	go build -ldflags='-s' -o=./bin/api ./cmd/api
+	GOOS=linux GOARCH=amd64 go build -ldflags='-s' -o=./bin/linux_amd64/api ./cmd/api
+
+
+# ==================================================================================== #
+# PRODUCTION
+# ==================================================================================== #
+production_host_ip = '159.223.219.229'
+
+## production/connect: connect to the production server
+.PHONY: production/connect
+production/connect:
+	ssh gistbin@${production_host_ip}
+
+
+## production/deploy/api: deploy the api to production
+.PHONY: production/deploy/api
+production/deploy/api:
+	rsync -P ./bin/linux_amd64/api gistbin@${production_host_ip}:~
+	rsync -rP --delete ./migrations gistbin@${production_host_ip}:~
+	rsync -P ./remote/production/api.service gistbin@${production_host_ip}:~
+	rsync -P ./remote/production/Caddyfile gistbin@${production_host_ip}:~
+	ssh -t gistbin@${production_host_ip} '\
+		migrate -path ~/migrations -database $$GISTBIN_DB_DSN up \
+		&& sudo mv ~/api.service /etc/systemd/system/ \
+		&& sudo systemctl enable api \
+		&& sudo systemctl restart api \
+		&& sudo mv ~/Caddyfile /etc/caddy/ \
+		&& sudo systemctl reload caddy \
+	'

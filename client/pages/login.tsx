@@ -6,11 +6,10 @@ import Head from "next/head";
 import Navbar from "../components/Navbar";
 import Input from "../components/form-component/Input";
 
-import Footer from "../components/Footer";
 import Section from "../components/Section";
 import { useRouter } from "next/router";
 import { FormErrors } from "../utils/types";
-import { REACT_API_URL } from "../utils/utils";
+import { REACT_API_URL } from "../utils/constants";
 
 export default function Login() {
   const { jwt, setJwt, setUser } = useContext(UserContext);
@@ -41,6 +40,7 @@ export default function Login() {
       setErrors(err);
       return;
     }
+    console.log(payload);
 
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -52,8 +52,15 @@ export default function Login() {
     };
 
     fetch(`${REACT_API_URL}/v1/users/login`, requestOptions)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw Error(res.statusText);
+        }
+        return res.json();
+      })
       .then((data: any) => {
+        console.log(data);
+
         if (data.error) {
           setErrors(data.error);
         } else if (data.token) {

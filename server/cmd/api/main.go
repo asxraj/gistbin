@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/asxraj/gistbin/internal/models"
-
 	"github.com/joho/godotenv"
+
 	_ "github.com/lib/pq"
 )
 
@@ -37,6 +37,11 @@ type application struct {
 func main() {
 	var cfg config
 
+	flag.IntVar(&cfg.port, "port", 4000, "Server listens to port")
+	flag.StringVar(&cfg.env, "env", "development", "development|production|staging")
+
+	flag.Parse()
+
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -44,11 +49,6 @@ func main() {
 
 	cfg.jwt.secret = os.Getenv("JWT_SECRET")
 	cfg.dsn = os.Getenv("GISTBIN_DB_DSN")
-
-	flag.IntVar(&cfg.port, "port", 4000, "Server listens to port")
-	flag.StringVar(&cfg.env, "env", "development", "development|production|staging")
-
-	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
