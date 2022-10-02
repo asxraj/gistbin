@@ -28,7 +28,7 @@ func TestCreateUser(t *testing.T) {
 
 		{
 			name:     "Valid Input",
-			wantCode: http.StatusUnauthorized,
+			wantCode: http.StatusCreated,
 			input: input{
 				Username: "asxraj",
 				Email:    "asxraj@gmail.com",
